@@ -9,30 +9,53 @@ ShapeStealer.Gameplay.prototype = {
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		
 		this.prepareHero();
-		
-		this.cursors = game.input.keyboard.createCursorKeys();
 	},
 	
+	changeKey : false,
+	
 	update: function() {
-		this.player.body.velocity.x=0;
-		if(this.cursors.left.isDown)
-		{
+		this.player.body.velocity.x=0;	
+		if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
 			this.player.body.velocity.x = -150;
 		}
-		else if(this.cursors.right.isDown)
-		{
+		else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
 			this.player.body.velocity.x = 150;
 		}
-	
+		
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.body.onFloor())// && this.player.body.touching.down)
+		{
+			console.log(this.player.mode);
+			console.log(playerMode.JumpPoint);
+			if(this.player.mode != playerMode.JumpPoint)
+			{
+				console.log("Normal...");
+				this.player.body.velocity.y = -20;
+			}
+			else
+			{
+				console.log("Jumping point!");
+				this.player.body.velocity.y = -200;
+			}
+		}
+		
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
+		{
+			if(!this.changeKey)
+			{
+			console.log("Bioboost!");
+			this.player.ChangeMode();
+			this.changeKey = true;
+			}
+		}
+		else
+		{
+			this.changeKey = false;
+		}
 	}
 };
 
 ShapeStealer.Gameplay.prototype.prepareHero = function(){
-	this.player = this.game.add.sprite(30,30, 'hero');
+	this.player = new Player(game,30,30,'hero');
 	
-	this.game.physics.arcade.enable(this.player);
-	
-	this.player.body.bounce.y = 0;
-	this.player.body.gravity.y = 100;
-	this.player.body.collideWorldBounds = true;
+	game.add.existing(this.player);
 };
